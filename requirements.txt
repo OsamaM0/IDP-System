@@ -1,0 +1,14 @@
+fastapi==0.101.0
+uvicorn[standard]
+gunicorn
+python-multipart
+pillow==10.2.0
+opencv-python==4.6.0.66
+pytesseract
+requests
+numpy==1.23.5
+scikit-learn==1.4.0
+pytwain==2.3.0
+pytorch-lightning==2.3.3
+pytorch-metric-learning==2.3.0
+surya-ocr==0.8.0

@@ -1,2 +1,1 @@
-# IDP-System
-# Intelligent Document Processing
+# OCR System

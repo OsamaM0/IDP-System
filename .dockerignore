@@ -1,0 +1,13 @@
+__pycache__
+.DS_Store
+.env
+.venv/
+*.pyc
+*.egg-info/
+dist/
+build/
+data/training_data/*
+docs/_build/
+*.log
+.pytest_cache/
+.coverage
