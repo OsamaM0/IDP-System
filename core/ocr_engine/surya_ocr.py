@@ -11,8 +11,9 @@ from .ocr_engine_enums import OCRLanguage, OCREngineType
 class SuryaOCREngine(OCREngineInterface):
     """Implementation of OCR Engine Interface for Surya OCR model"""
     
-    def __init__(self, languages: List[OCRLanguage] ):
-        """Initialize Surya models and processors"""
+    def __init__(self, languages: List[OCRLanguage], **kwargs):
+        # Ignore extra configuration keys not used by SuryaOCREngine
+        kwargs.pop("confidence_threshold", None)
         self.det_processor = load_det_processor()
         self.det_model = load_det_model()
         self.rec_model = load_rec_model()
@@ -82,7 +83,6 @@ class SuryaOCREngine(OCREngineInterface):
             
         results = []
         for line in predictions[0].text_lines:
-            print(line)
             if line.confidence > 90:
                 results.append(OCRResult(
                     text=line.text,
@@ -90,8 +90,15 @@ class SuryaOCREngine(OCREngineInterface):
                     metadata={"engine": "surya"}
                 ))
             else:
-                print("CAN'T DETECT: ", line)
+                results.append(OCRResult(
+                    text="",
+                    bbox=self._convert_bbox(line.bbox),
+                    metadata={"engine": "surya"}
+                ))
         return results
+
+    def get_text_with_bounding_boxes(self, image: np.ndarray) -> List[OCRResult]:
+        return self.get_text_with_bbox(image)
 
     def get_supported_languages(self) -> List[str]:
         """Get list of supported languages"""

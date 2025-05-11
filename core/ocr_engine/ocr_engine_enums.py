@@ -14,10 +14,17 @@ class OCRLanguage(Enum):
     MRZ = "mrz"
     ENGLISH = "en" 
     BENGALI = "bn"
+    JAPANESE = "ja"
+    KOREAN = "ko"
+    PORTUGUESE = "pt"
     CHINESE = "zh"
-    FRENCH = "fr"
-    GERMAN = "de"
     HINDI = "hi"
+    GERMAN = "german"
+    FRENCH = "french"
+    ITALIAN = "it"
+    SPANISH = "es"
+    RUSSIAN = "ru"
+    
         
     @classmethod
     def from_code(cls, code: str) -> 'OCRLanguage':

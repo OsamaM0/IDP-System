@@ -30,7 +30,7 @@ class ROIController:
         """
         roi_extractor = ROIExtractorFactory.create_roi_extractor(self.roi_type, self.image)
         extracted_roi = roi_extractor.roi_extraction()
-        
+        print(extracted_roi)
         extracted_image = extracted_roi.get("image", None)
         
         if extracted_image is None:
@@ -39,7 +39,6 @@ class ROIController:
         output = {}
         for roi in extracted_roi.get("detected_parts", []):
             for k, v in roi.items():
-                print(f"[INFO] Detected {k} with bbox: {v}")
                 x1, y1, x2, y2 = v
                 roi_image = extracted_image[y1:y2, x1:x2]
                 output[k] = roi_image

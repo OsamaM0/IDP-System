@@ -59,8 +59,6 @@ def numpy_to_bytes(image_np: np.ndarray, format: str = "PNG") -> str:
 
 
 def preprocess_image(image: np.ndarray) -> torch.Tensor:
-    print("Preprocessing image: ", image.shape)
-    print("Preprocessing image: ", len(image))
     image = Image.fromarray(image)
     return DATA_TRANSFORMS(image).unsqueeze(0)
 

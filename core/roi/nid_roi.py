@@ -25,8 +25,6 @@ class NID_ROI:
         for result in results:
             for box in result.boxes:
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
-                
-                print(f"[INFO] Bounding box: ({x1}, {y1}, {x2}, {y2})")
                 cropped_image = rotate_card(self.image, x1, y1, x2, y2)
         preprocessed_rotated_cropped_image = ImagePreprocessor.resize(cropped_image, scale=5)
         
@@ -37,7 +35,6 @@ class NID_ROI:
         output = {"image": preprocessed_rotated_cropped_image,
                   "detected_parts": []}
         
-        print(results)
         for result in results:
             output_path = 'd2.jpg'
             result.save(output_path)
@@ -46,8 +43,6 @@ class NID_ROI:
             for box in result.boxes:
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
                 class_id = int(box.cls[0].item())
-                class_name = result.names[class_id]
-                print(f"[INFO] Detected {class_name} with bbox: {x1, y1, x2, y2}")
-                
+                class_name = result.names[class_id]                
                 output["detected_parts"].append({class_name: [x1, y1, x2, y2]})
         return output

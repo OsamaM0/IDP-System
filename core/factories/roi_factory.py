@@ -1,7 +1,7 @@
-from core.preprocessor.tax_preprocessor import TaxPreprocessor
 from core.roi.nid_roi import NID_ROI
 from core.roi.passport_roi import MRZ_ROI
 from core.roi.base_roi import BaseROI
+from core.roi.general_roi import GENERAL_ROI
 from core.document_type.document_type_enums import DocumentType
 class ROIExtractorFactory:
     """Factory class to create OCR engine objects based on the OCR engine type."""
@@ -19,12 +19,9 @@ class ROIExtractorFactory:
         Returns:
             BaseROI: An ROI extractor object.
         """
-        print(f"[INFO] Creating ROI extractor of type: {roi_type}")
         if roi_type == DocumentType.NIDF or roi_type == DocumentType.NIDB:
             return NID_ROI(image=image)
-        elif roi_type == DocumentType.PASSPORT or DocumentType.TAX:
+        elif roi_type == DocumentType.PASSPORT:
             return MRZ_ROI(image=image)
-        elif roi_type == DocumentType.TAX:
-            return TaxPreprocessor(image=image)
         else:
-            raise ValueError(f"Unsupported preprocessor type: {roi_type}")
+            return GENERAL_ROI(image=image)

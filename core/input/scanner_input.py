@@ -69,28 +69,29 @@ class ScannerInput(InputSource):
     async def load_image(self) -> bytes:
         """
         Asynchronously captures an image from the scanner and returns its bytes.
-
-        Returns:
-            bytes: The scanned image data
-
-        Raises:
-            Exception: If scanner interaction fails
+        Raises an exception if no valid image data is received.
         """
         try:
             self.error = None
-            # Run the scanning operation in a thread pool to prevent blocking
             loop = asyncio.get_running_loop()
             image_data = await loop.run_in_executor(
                 self._executor, 
                 self._scan_sync
             )
+            if not image_data:
+                raise Exception("No image data captured from scanner")
             return image_data
 
         except Exception as e:
             self.status = "error"
             self.error = str(e)
+            self.logger.error(f"Error in load_image: {e}")
             raise
 
     async def shutdown(self):
         """Cleanup resources."""
-        self._executor.shutdown(wait=True)
+        try:
+            self._executor.shutdown(wait=True)
+            self.logger.info("Scanner executor shutdown successfully.")
+        except Exception as e:
+            self.logger.error(f"Error during shutdown: {e}")

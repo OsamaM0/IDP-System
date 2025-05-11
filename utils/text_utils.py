@@ -8,7 +8,6 @@ class TextUtils:
         try:
             # Check if there are Arabic characters in the text
             if any('\u0600' <= c <= '\u06FF' for c in text):
-                print(text)
                 # Reshape the Arabic text
                 s_text = [t[::-1] for t in text.split(" ")]
                 s_text.reverse()

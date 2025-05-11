@@ -2,8 +2,6 @@ import json
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel
 import numpy as np
-from PIL import Image
-import io
 from typing import Optional
 from api.controllers.idp_controller import IDPController
 from core.document_type.document_type_enums import DocumentType
@@ -25,7 +23,7 @@ class InputDataSchema(BaseModel):
         ocr_engine_type: Optional[OCREngineType] = OCREngineType.PADDLE,
         language: Optional[OCRLanguage] = OCRLanguage.ARABIC,  
         doc_type: Optional[DocumentType] = None,
-        file: Optional[UploadFile] = File(None),
+        file: UploadFile = File(None),
         
     ):
         """
@@ -78,7 +76,6 @@ class InputDataSchema(BaseModel):
                 language=language,
                 doc_type=doc_type
             )
-            print(result)
             # Convert result to JSON-compatible format
             json_data = {
                 "status": "success",

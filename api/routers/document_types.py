@@ -20,7 +20,6 @@ async def verify_document(file: UploadFile):
     image_bytes = await file.read()
     image = read_image(image_bytes=image_bytes)
     result = verifier.verify_document(image=image)
-    print(f"[INFO] Verification results: {result}")
     for res in result:
         if res.class_name == DocumentType.NO_CLASS:
             continue

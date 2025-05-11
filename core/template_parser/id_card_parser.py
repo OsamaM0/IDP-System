@@ -37,7 +37,6 @@ class IDCardParser(BaseParser):
                 '35': 'South Sinai',
                 '88': 'Foreign'
             }
-            id_number = id_number.replace(" ", "")
             # Check if ID is valid and contains enough digits
             if id_number == "Unknown" or len(id_number) < 14:
                 return {
@@ -72,7 +71,6 @@ class IDCardParser(BaseParser):
                 DocumentType.GENDER: gender
             }
         except Exception as e:
-            print(f"Error decoding ID: {e}")
             return {
                 DocumentType.BIRTH_DATE: "Unknown",
                 DocumentType.GOVERNORATE: "Unknown",
@@ -108,6 +106,9 @@ class IDCardParser(BaseParser):
         for k, v in id_card_data.items():
             id_card_parsed_data[k] = v
             if k in ["nid", "nid_back"]:
+                # Remove spaces from ID number
+                v = v.replace(" ", "")
+                # Parse the Egyptian ID number
                 id_card_parsed_data.update(self.parse_egyptian_id(v))
             elif k in ["demo"]:
                 id_card_parsed_data.update(self.parse_egyption_demo(v))

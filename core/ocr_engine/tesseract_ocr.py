@@ -3,6 +3,8 @@ import cv2
 import pytesseract
 import numpy as np
 from pathlib import Path
+
+from utils.image_preprocessor import ImagePreprocessor
 from .base_ocr_engine import BoundingBox, OCREngineInterface, OCRResult
 from .ocr_engine_enums import OCREngineType, OCRLanguage
 from config.config import get_settings
@@ -10,7 +12,9 @@ from config.config import get_settings
 class TesseractOCREngine(OCREngineInterface):
     """Implementation of OCR Engine Interface for Tesseract"""
     
-    def __init__(self, languages: List[OCRLanguage]):
+    def __init__(self, languages: List[OCRLanguage], **kwargs):
+        # Remove extra kwargs not used by TesseractOCREngine
+        kwargs.pop("confidence_threshold", None)
         settings = get_settings()
         self._validate_tesseract_setup(settings)
         self.supported_languages = [
@@ -68,12 +72,12 @@ class TesseractOCREngine(OCREngineInterface):
             return rotated
         
         # Get the skew angle
-        skew_angle = get_skew_angle(image)
-        print("Detected skew angle:", skew_angle)
+        # skew_angle = get_skew_angle(image)
 
         # Rotate the image to correct skew
-        corrected_image = rotate_image(image, skew_angle)
-        cv2.imwrite("corrected_image.png", corrected_image)  # Save the corrected image for debugging
+        # corrected_image = rotate_image(image, skew_angle)
+        # cv2.imwrite("corrected_image.png", corrected_image)  # Save the corrected image for debugging
+        corrected_image = image
         return corrected_image
     
     def get_text(self, image: np.ndarray, lang: Optional[str] = None) -> List[str]:
@@ -158,3 +162,7 @@ class TesseractOCREngine(OCREngineInterface):
     def get_supported_languages(self) -> List[str]:
         """Get list of supported languages"""
         return self.supported_languages.copy()
+    
+    # Added to satisfy abstract method requirement:
+    def get_text_with_bounding_boxes(self, image: np.ndarray) -> List[OCRResult]:
+        return self.get_text_with_bbox(image)

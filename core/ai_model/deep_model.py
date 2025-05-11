@@ -8,6 +8,7 @@ from config.config import get_settings
 import torch
 import torch.nn as nn
 from torchvision import models
+from contextlib import contextmanager
 
 def set_seed(seed: int):
     torch.manual_seed(seed)
@@ -17,6 +18,38 @@ def set_seed(seed: int):
     random.seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
+
+@contextmanager
+def temporary_seed(seed: int):
+    """
+    Context manager for temporarily setting a random seed and restoring
+    the previous state afterward.
+    
+    Args:
+        seed: The seed to temporarily set
+        
+    Example:
+        with temporary_seed(42):
+            # Code that needs deterministic behavior
+    """
+    # Store current random states
+    np_state = np.random.get_state()
+    torch_state = torch.get_rng_state()
+    torch_cuda_state = torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None
+    random_state = random.getstate()
+    
+    # Set seed
+    set_seed(seed)
+    
+    try:
+        yield
+    finally:
+        # Restore previous random states
+        np.random.set_state(np_state)
+        torch.set_rng_state(torch_state)
+        if torch_cuda_state is not None:
+            torch.cuda.set_rng_state_all(torch_cuda_state)
+        random.setstate(random_state)
 
 class DeepModel(BaseModel):
     def __init__(self, model_path: str = None, device: str = 'cpu'):

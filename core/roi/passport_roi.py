@@ -33,7 +33,6 @@ class MRZ_ROI(BaseROI):
                 class_id = int(box.cls[0].item())
                 class_name = result.names[class_id]
                 bbox = [int(coord) for coord in bbox]
-                print(f"[INFO] Detected {class_name} with bbox: {bbox}")
                 output["detected_parts"].append({class_name: bbox})
         
         return output

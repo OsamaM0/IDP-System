@@ -8,10 +8,12 @@ from .ocr_engine_enums import OCRLanguage, OCREngineType
 class EasyOCREngine(OCREngineInterface):
     """OCR Engine Interface implementation using EasyOCR."""
     
-    def __init__(self, languages: List[OCRLanguage], use_gpu: bool = False):
+    def __init__(self, languages: List[OCRLanguage], use_gpu: bool = False, **kwargs):
+        # Remove extra kwargs not needed by EasyOCREngine
+        kwargs.pop("confidence_threshold", None)
         # Initialize EasyOCR Reader with selected languages
         lang_codes = [lang.value for lang in languages]  # e.g., ['en', 'ar']
-        self.reader = easyocr.Reader(lang_codes, gpu=use_gpu)  # loads PyTorch models :contentReference[oaicite:2]{index=2}
+        self.reader = easyocr.Reader(lang_codes, gpu=use_gpu)  # loads PyTorch models
         self.supported_languages = lang_codes.copy()
 
 
@@ -27,7 +29,6 @@ class EasyOCREngine(OCREngineInterface):
     def get_text(self, image: np.ndarray) -> List[str]:
         """Extract high-confidence text lines."""
         results = self.reader.readtext(image)  # [(bbox, text, conf), ...] :contentReference[oaicite:3]{index=3}
-        print(results)
         return [text for _, text, conf in results if conf > 0.50]
 
     def get_bboxes(self, image: np.ndarray) -> List[BoundingBox]:
@@ -46,6 +47,9 @@ class EasyOCREngine(OCREngineInterface):
                     metadata={"engine": "easyocr", "confidence": conf}
                 ))
         return results
+
+    def get_text_with_bounding_boxes(self, image: np.ndarray) -> List[OCRResult]:
+        return self.get_text_with_bbox(image)
 
     def get_supported_languages(self) -> List[str]:
         return self.supported_languages.copy()

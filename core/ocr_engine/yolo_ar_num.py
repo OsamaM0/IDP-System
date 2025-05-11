@@ -26,12 +26,7 @@ class YoloArabicNumberOCR(OCREngineInterface):  # inherit from interface
         """
         Detect Arabic numbers in an image using YOLO model.
         """
-        print("Detecting numbers...")
-        print(image.shape)
         results = self.model.predict(image)
-        print("Results:")
-        print(results)
-        # print(results)
         detected_info = []
         detections = []
         
@@ -59,7 +54,6 @@ class YoloArabicNumberOCR(OCREngineInterface):  # inherit from interface
         Extract text from image.
         """
         number_string, _ = self.detect_numbers(image)
-        print(number_string)
         return [number_string]
 
     def get_bboxes(self, image: np.ndarray) -> List[BoundingBox]:

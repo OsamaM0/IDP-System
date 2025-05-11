@@ -2,6 +2,7 @@ from core.roi.nid_roi import NID_ROI
 from core.roi.passport_roi import MRZ_ROI
 from core.roi.base_roi import BaseROI
 from core.document_type.document_type_enums import DocumentType
+from core.template_parser.general_parser import GeneralParser
 from core.template_parser.id_card_parser import IDCardParser
 from core.template_parser.mrz_parser import MRZParser
 class ParserFactory:
@@ -20,10 +21,10 @@ class ParserFactory:
         Returns:
             BaseROI: An parser extractor object.
         """
-        print(f"[INFO] Creating ROI extractor of type: {parser_type}")
         if parser_type == DocumentType.NIDF or parser_type == DocumentType.NIDB:
             return IDCardParser()
-        elif parser_type == DocumentType.PASSPORT or DocumentType.TAX:
+        elif parser_type == DocumentType.PASSPORT:
             return MRZParser()
         else:
-            raise ValueError(f"Unsupported preprocessor type: {parser_type}")
+            return GeneralParser()
+

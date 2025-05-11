@@ -5,7 +5,6 @@ from core.template_parser.base_roi import BaseParser
 
 class MRZParser(BaseParser):
     def _cleanse_roi(self, mrz_text):
-        print("MRZ TEXT:", mrz_text)
         input_list = mrz_text.replace(" ", "").split("\n")
         # selection_length = next((len(item) for item in input_list if "<" in item and len(item) in {30, 36, 44}), None,)
         # selection_length = next((len(item) for item in input_list if "<" in item), None,)
@@ -13,7 +12,6 @@ class MRZParser(BaseParser):
         if len(new_list) not in [2,3]:
             return ""
         # new_list = [item for item in input_list if len(item) >= selection_length]
-        print("CLEANSED MRZ TEXT:", new_list)
         return "\n".join(new_list)
 
     def _get_final_checkdigit(self, input_string, input_type):
