@@ -301,44 +301,45 @@ class PaddleOCREngine(OCREngineInterface):
         Returns:
             Preprocessed image
         """
+        # Convert to grayscale
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        
         if image is None or image.size == 0:
             logger.error("Empty image provided to PaddleOCR")
             raise ValueError("Empty image provided")
         
-        # Ensure image is in RGB format
-        if len(image.shape) == 2:  # Grayscale image
-            image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-        elif image.shape[2] == 4:  # RGBA image, convert to RGB
-            image = cv2.cvtColor(image, cv2.COLOR_RGBA2RGB)
-        elif len(image.shape) == 3 and image.shape[2] == 3 and np.max(image) <= 1.0:  
-            # Normalized image [0,1], convert to [0,255]
-            image = (image * 255).astype(np.uint8)
+        # # Ensure image is in RGB format
+        # if len(image.shape) == 2:  # Grayscale image
+        #     image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
+        # elif image.shape[2] == 4:  # RGBA image, convert to RGB
+        #     image = cv2.cvtColor(image, cv2.COLOR_RGBA2RGB)
+        # elif len(image.shape) == 3 and image.shape[2] == 3 and np.max(image) <= 1.0:  
+        #     # Normalized image [0,1], convert to [0,255]
+        #     image = (image * 255).astype(np.uint8)
         
-        # Apply contrast enhancement for better text detection
-        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-        lab = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
-        lab_planes = list(cv2.split(lab))  # Convert tuple to list for mutable assignment
-        lab_planes[0] = clahe.apply(lab_planes[0])
-        lab = cv2.merge(lab_planes)
-        enhanced_image = cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
+        # # Apply contrast enhancement for better text detection
+        # clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        # lab = cv2.cvtColor(image, cv2.COLOR_RGB2LAB)
+        # lab_planes = list(cv2.split(lab))  # Convert tuple to list for mutable assignment
+        # lab_planes[0] = clahe.apply(lab_planes[0])
+        # lab = cv2.merge(lab_planes)
+        # enhanced_image = cv2.cvtColor(lab, cv2.COLOR_LAB2RGB)
         
-        # Apply language-specific preprocessing
-        primary_language = self.languages[0] if self.languages else OCRLanguage.ENGLISH
+        # # Apply language-specific preprocessing
+        # primary_language = self.languages[0] if self.languages else OCRLanguage.ENGLISH
         
-        # Apply additional enhancements for Arabic if needed
-        if primary_language == OCRLanguage.ARABIC:
-            # For Arabic text, apply specific enhancements like sharpening
-            kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
-            enhanced_image = cv2.filter2D(enhanced_image, -1, kernel)
+        # # Apply additional enhancements for Arabic if needed
+        # if primary_language == OCRLanguage.ARABIC:
+        #     # For Arabic text, apply specific enhancements like sharpening
+        #     kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
+        #     enhanced_image = cv2.filter2D(enhanced_image, -1, kernel)
         
-        # For MRZ, optimize with different preprocessing
-        if primary_language == OCRLanguage.MRZ:
-            # Convert to grayscale
-            gray = cv2.cvtColor(enhanced_image, cv2.COLOR_RGB2GRAY)
-            # Apply binary threshold
-            _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            # Convert back to RGB
-            enhanced_image = cv2.cvtColor(binary, cv2.COLOR_GRAY2RGB)
+        # # For MRZ, optimize with different preprocessing
+        # if primary_language == OCRLanguage.MRZ:
+        #     # Apply binary threshold
+        #     _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        #     # Convert back to RGB
+        #     enhanced_image = cv2.cvtColor(binary, cv2.COLOR_GRAY2RGB)
         
                 # Expand the image to avoid cutting off text
         enhanced_image = ImagePreprocessor.expand_image_background(image, 10, 1.5) 

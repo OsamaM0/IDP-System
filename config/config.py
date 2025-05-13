@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     """
     # API settings
     API_KEY: Optional[str] = Field(None, description="API key for authentication")
-    DEBUG: bool = Field(False, description="Debug mode")
+    DEBUG: bool = Field(True, description="Debug mode")
     LOG_LEVEL: str = Field("INFO", description="Logging level")
     
     # Application info

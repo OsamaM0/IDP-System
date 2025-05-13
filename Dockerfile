@@ -1,3 +1,4 @@
+# Use the official Python slim image as the base
 FROM python:3.10-slim
 
 # Set working directory
@@ -8,7 +9,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app \
     DEBIAN_FRONTEND=noninteractive \
-    TZ=UTC
+    TZ=UTC \
+    TESSERACT_PATH="/usr/bin/tesseract" \
+    TESSERACT_DIR="/usr/share/tesseract-ocr/5/tessdata"
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -32,17 +35,15 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy application code
 COPY . .
 
+# Copy tessdata from assets/tessdata to Tesseract's tessdata directory
+RUN mkdir -p ${TESSERACT_DIR} && \
+    cp -r assets/tessdata/*.traineddata ${TESSERACT_DIR}/
+
 # Create necessary directories
 RUN mkdir -p cache models data/output logs
 
-# Set permissions
-RUN chmod +x scripts/entrypoint.sh
-
 # Expose port
 EXPOSE 8000
-
-# Set entrypoint
-ENTRYPOINT ["scripts/entrypoint.sh"]
 
 # Set default command
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

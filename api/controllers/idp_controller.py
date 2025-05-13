@@ -211,9 +211,6 @@ class IDPController:
         Returns:
             Preprocessed image
         """
-        # Convert to grayscale for better OCR results
-        # if len(image.shape) > 2 and image.shape[2] > 1:
-        #     image = ImagePreprocessor.convert_to_grayscale(image)
         
         # Upscale small images for better OCR results
         if image.shape[0] < 1100 or image.shape[1] < 1100:
@@ -239,12 +236,6 @@ class IDPController:
                         logger.debug(f"Upscaling with {name} failed: {str(e)}")
             except Exception as e:
                 logger.warning(f"All upscaling methods failed: {str(e)}")
-        
-        # Convert back to RGB for OCR engines that require it
-        if len(image.shape) == 2:
-            image = ImagePreprocessor.convert_to_rgb(image)
-            
-        # Apply additional enhancements if needed
         # image = ImagePreprocessor.enhance_contrast(image)
 
         return image
